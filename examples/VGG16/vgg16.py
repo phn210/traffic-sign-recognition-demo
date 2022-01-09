@@ -60,7 +60,7 @@ classes = { 1:'Speed limit (20km/h)',
             42:'End of no passing', 
             43:'End no passing veh > 3.5 tons' }
 
-my_model = load_model('C:\\Users\\Admin\\Documents\\WorkStation\\Signature\\traffic-sign-recognition-demo\\examples\\VGG16\\model')
-prediction = predict(my_model, 'C:\\Users\\Admin\\Documents\\WorkStation\\Signature\\traffic-sign-recognition-demo\\examples\\VGG16\\test\\00001.png')
+my_model = load_model('./model')
+prediction = predict(my_model, './test/00001.png')
 
 print(prediction)

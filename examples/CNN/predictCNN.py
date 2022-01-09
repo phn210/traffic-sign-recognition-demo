@@ -60,8 +60,8 @@ classes = { 1:'Speed limit (20km/h)',
             42:'End of no passing', 
             43:'End no passing veh > 3.5 tons' }
 
-my_model = load_model(r'mymodelCV.h5')
-prediction = predict(my_model, r'00001.png')
+my_model = load_model('./model/mymodelCV.h5')
+prediction = predict(my_model, './test/00001.png')
 
 for i in range(43):
     if prediction[0][i] == 1:
