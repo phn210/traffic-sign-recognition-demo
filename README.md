@@ -1,9 +1,11 @@
-# traffic-sign-recognition-demo
+# Traffic Signs Recognion Examples & Web App demo
 
-## Yolo
+## Examples
 
-### Data and model drive: https://drive.google.com/drive/folders/1Fnd7KK1p_c6hAQd9gUZ_7pC4trfoonXn?usp=sharing
+<p>We use 2 CNN-based methods for classification - traditional CNN & VGG16, and another method is combination of YOLOv3 and CNN for integration with objects detection.</p>
+<p>The demo in python can be found in /examples folder with full tutorial to run code in Python environment.</p>
 
-### Link Colab: https://colab.research.google.com/drive/1cIpYvrs5_cLBBLhbl0-ICuBm7ONZYfBt?usp=sharing
+## Web App
 
-### Original Video Detection: https://www.youtube.com/watch?v=fkps18H3SXY
+<p>Our implementations is deployed on client-server web app.</p>
+<p>We use Flask for backend and ReactJS for frontend.</p>
