@@ -1,10 +1,6 @@
 import tensorflow as tf
 
 
-def test():
-    return 'test'
-
-
 def loadModel(model_path):
     model = tf.keras.models.load_model(model_path)
     return model

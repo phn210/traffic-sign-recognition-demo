@@ -5,17 +5,16 @@ import Helper
 
 
 def predict(model, img_path):
-    total_classes = 43
-    height = 64
-    width = 64
+    HEIGTH = 64
+    WIDTH = 64
     image_to_read = cv.imread(img_path)
-    resize_image = cv.resize(image_to_read,(height, width))
-    np_image = np.reshape(resize_image, [1, 64,64,3])
+    resize_image = cv.resize(image_to_read,(HEIGTH, WIDTH))
+    np_image = np.reshape(resize_image, [1, HEIGTH, WIDTH,3])
     predictions = model.predict(np_image)
     return predictions
 
 
-my_model = Helper.load_model('./CNN/model')
-prediction = predict(my_model, './CNN/test/00001.png')
+model = Helper.loadModel('./models/VGG16')
+class_id = np.argmax(predict(model, './test/non-detect/00001.png')) + 1
 
-print(prediction)
+print(Helper.getClassName(class_id))
