@@ -12,5 +12,5 @@ def predict(model, img_path):
     predictions = model.predict(np_image)
     for i in range(total_classes):
         if predictions[0][i] == 1:
-            return i
+            return (i+1)
     return -1

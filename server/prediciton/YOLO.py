@@ -1,10 +1,76 @@
 import numpy as np
 import cv2 as cv
 import tensorflow as tf
+from .Helper import getAllSignsName, getAllClasses, getClassName
 
 
 def predict_img(weights_path, config_path, model, img_path):
-    height = 32
-    width = 32
+    HEIGHT = 32
+    WIDTH = 32
     net = cv.dnn.readNet(weights_path, config_path)
     
+    classes = getAllSignsName()
+
+    #get last layers names
+    layer_names = net.getLayerNames()
+    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+    
+    confidence_threshold = 0.5
+    font = cv.FONT_HERSHEY_SIMPLEX
+
+    classification_model = model #load mask detection model
+    classes_classification = getAllClasses().values()
+
+    img = cv.imread(img_path)
+    if img is None:
+        return []
+
+    #get image shape
+    height, width, channels = img.shape
+
+    # Detecting objects (YOLO)
+    blob = cv.dnn.blobFromImage(img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
+    net.setInput(blob)
+    outs = net.forward(output_layers)
+
+    # # Showing informations on the screen (YOLO)
+    class_ids = []
+    confidences = []
+    boxes = []
+    for out in outs:
+        for detection in out:
+            scores = detection[5:]
+            class_id = np.argmax(scores)
+            confidence = scores[class_id]
+            if confidence > confidence_threshold:
+                # Object detected
+                center_x = int(detection[0] * width)
+                center_y = int(detection[1] * height)
+                w = int(detection[2] * width)
+                h = int(detection[3] * height)
+                # Rectangle coordinates
+                x = int(center_x - w / 2)
+                y = int(center_y - h / 2)
+                boxes.append([x, y, w, h])
+                confidences.append(float(confidence))
+                class_ids.append(class_id)
+                
+    indexes = cv.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+    recognized = []
+    for j in range(len(boxes)):
+        if j in indexes:
+            x, y, w, h = boxes[j]
+            label = str(classes[class_ids[j]]) + "=" + str(round(confidences[j]*100, 2)) + "%"
+            img = cv.rectangle(img, (x, y), (x + w, y + h), (255,0,0), 2)
+            crop_img = img[y:y+h, x:x+w]
+            if len(crop_img) >0:
+                crop_img = cv.resize(crop_img, (WIDTH, HEIGHT))
+                crop_img =  crop_img.reshape(-1, WIDTH, HEIGHT, 3)
+                # np_image = np.reshape(crop_img, [1, width,height,3])
+                prediction = np.argmax(classification_model.predict(crop_img))
+                recognized.append(str(prediction))
+                label = str(getClassName(prediction))
+                img = cv.putText(img, label, (x, y), font, 0.5, (255,0,0), 2)
+
+    cv.imwrite(img_path, img)
+    return recognized

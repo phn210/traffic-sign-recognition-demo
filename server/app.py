@@ -39,27 +39,29 @@ def process_image():
         class_name = ''
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
+            print('No file part')
             response["upload_result"] = "0"
+            return response
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            flash('No selected file')
+            print('No selected file')
             response["upload_result"] = "0"
+            return response
         if file and allowed_file(file.filename, True):
             filename = secure_filename(file.filename)
             image_path = os.path.join(app.config['UPLOAD_IMG_FOLDER'], filename)
             file.save(image_path)
             response["upload_result"] = "1"
         else:
+            print('test')
             response["upload_result"] = "0"
 
         # image_path = './test/images/00001.png'
         method = request.form['method']
-        print("choose prediction model")
+        response['method'] = method
         if method == 'CNN':
-            response['method'] = method
             model = Helper.loadModel('./models/CNN/mymodelCV.h5')
             result = CNN.predict(model, image_path)
             if result > 0:
@@ -69,7 +71,6 @@ def process_image():
                 response['class_name'] = ''
 
         elif method == 'VGG16':
-            response['method'] = method
             model = Helper.loadModel('./models/VGG16/')
             result = VGG16.predict(model, image_path)
             if result > 0:
@@ -79,7 +80,18 @@ def process_image():
                 response['class_name'] = ''
             
         elif method == 'YOLO':
-            response['method'] = method
+            weights_path = './models/YOLO/yolov3_training_last.weights'
+            config_path = './models/YOLO/yolov3_training.cfg'
+            model = Helper.loadModel('./models/YOLO/traffic.h5')
+            result = YOLO.predict_img(weights_path, config_path, model, image_path)
+            class_names = []
+            if len(result) > 0:
+                for i in result:
+                    class_names.append(Helper.getClassName(int(i)))
+                response['class_name'] = class_names
+            else:
+                response['class_name'] = ''
+
         else:
             response['method'] = 0
 

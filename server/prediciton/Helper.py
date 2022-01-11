@@ -1,11 +1,18 @@
 import tensorflow as tf
 
+
 def test():
     return 'test'
+
 
 def loadModel(model_path):
     model = tf.keras.models.load_model(model_path)
     return model
+
+
+def getAllSignsName():
+    return ['prohibitory', 'danger', 'mandatory', 'other']
+
 
 def getAllClasses():
     return { 1:'Speed limit (20km/h)',
@@ -51,6 +58,7 @@ def getAllClasses():
             41:'Roundabout mandatory', 
             42:'End of no passing', 
             43:'End no passing veh > 3.5 tons' }
+
 
 def getClassName(id):
     return getAllClasses()[id]
