@@ -16,6 +16,6 @@ def predict(model, img_path):
 
 
 my_model = Helper.load_model('./CNN/model')
-prediction = predict(my_model, './test/00001.png')
+prediction = predict(my_model, './CNN/test/00001.png')
 
 print(prediction)

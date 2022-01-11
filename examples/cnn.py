@@ -14,9 +14,9 @@ def predict(model, img_path):
     return predictions
 
 
-model = Helper.load_model('./model/mymodelCV.h5')
-prediction = predict(model, './test/00001.png')
+model = Helper.loadModel('./models/CNN/mymodelCV.h5')
+prediction = predict(model, './test/non-detect/00001.png')
 
 for i in range(43):
     if prediction[0][i] == 1:
-        print(f"Name of the sign is: {classes[i]}")
+        print(Helper.getClassName(i+1))
