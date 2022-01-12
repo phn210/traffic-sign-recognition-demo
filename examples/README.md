@@ -22,7 +22,7 @@
 ### Install dependencies
 
 ` pip install --upgrade pip ` \
-` pip install requirements.txt `
+` pip install -r requirements.txt `
 
 ## Downloads models, configs & tests
 
