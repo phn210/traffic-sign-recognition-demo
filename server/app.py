@@ -9,8 +9,8 @@ UPLOAD_VID_FOLDER = './uploads/videos'
 ALLOWED_IMG_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'webp'}
 ALLOWED_VID_EXTENSIONS = {'mp4', 'mov', 'wmv', 'gif', 'webm'}
 
-app = Flask(__name__)
-cors = CORS(app)
+app = Flask(__name__, static_folder='../client/build', static_url_path='')
+CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['UPLOAD_IMG_FOLDER'] = UPLOAD_IMG_FOLDER
 app.config['UPLOAD_VID_FOLDER'] = UPLOAD_VID_FOLDER
@@ -25,10 +25,10 @@ def allowed_file(filename, img):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_VID_EXTENSIONS
 
 
-@app.route('/')
-@cross_origin()
-def home():
-    return {"notice": "welcome!!!"}
+# @app.route('/')
+# @cross_origin()
+# def home():
+#     return {"notice": "welcome!!!"}
 
 
 @app.route('/predict/img', methods=['POST'])
@@ -82,6 +82,7 @@ def process_image():
         elif method == 'YOLO':
             weights_path = './models/YOLO/yolov3_training_last.weights'
             config_path = './models/YOLO/yolov3_training.cfg'
+            # model = Helper.loadModel('./models/CNN/mymodelCV.h5')
             model = Helper.loadModel('./models/YOLO/traffic.h5')
             result = YOLO.predict_img(weights_path, config_path, model, image_path)
             class_names = []
@@ -100,30 +101,13 @@ def process_image():
     return response
 
 
-@app.route('/predict/vid', methods=['POST'])
-def process_video():
-    response = {}
-    if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            response["upload_result"] = "0"
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            response["upload_result"] = "0"
-        if file and allowed_file(file.filename, False):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_VID_FOLDER'], filename))
-            response["upload_result"] = "1"
-        else:
-            response["upload_result"] = "0"
-    return response
+@app.route('/')
+@cross_origin
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 if __name__ == '__main__':
     # cors = CORS(app)
-    app.run(debug=True)
-    # app.run()
+    # app.run(debug=True)
+    app.run()
