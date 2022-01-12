@@ -68,8 +68,8 @@ def predict_img(weights_path, config_path, model, img_path):
                 crop_img =  crop_img.reshape(-1, WIDTH, HEIGHT, 3)
                 # np_image = np.reshape(crop_img, [1, width,height,3])
                 prediction = np.argmax(classification_model.predict(crop_img))
-                recognized.append(str(prediction))
-                label = str(getClassName(prediction))
+                recognized.append(prediction + 1)
+                label = str(getClassName(prediction + 1))
                 img = cv.putText(img, label, (x, y), font, 0.5, (255,0,0), 2)
 
     cv.imwrite(img_path, img)
